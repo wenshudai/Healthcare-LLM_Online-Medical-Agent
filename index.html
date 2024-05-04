@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo Service</title>
+</head>
+<body>
+    <h1>Echo Service</h1>
+    <input type="text" id="inputString" placeholder="Enter a string">
+    <button onclick="sendString()">Send</button>
+    <p id="responseText">response is </p>
+
+    <script>
+        function sendString() {
+            var input = document.getElementById("inputString").value;
+            fetch('http://localhost:5000/chat', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({message: input})
+            })
+            .then(response => {
+                console.log(JSON.stringify({response : response}))
+                return response.json()
+            })
+            .then(data => {
+                console.log("data is " + JSON.stringify({data: data}))
+                document.getElementById("responseText").innerText = 'Response: ' + data.responseText;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
