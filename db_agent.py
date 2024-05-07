@@ -12,9 +12,37 @@ from openai import OpenAI
 # Finally, offer your well wishes.
 # Please ensure that your responses are casual and friendly, and make sure they are logical.
 # """}]
-open_api_key = "sk-..." #your api key here
+
 
 client = OpenAI(api_key=open_api_key)
+
+
+def casual_talk(user_input, model="gpt-3.5-turbo"):
+    return True
+
+
+def check_for_dob(user_input, model="gpt-3.5-turbo"):
+    context = [
+        {'role': 'system',
+         'content': "Extract the date of birth from the user's response using format YYYY-MM-DD, if present. If not, return that No DOB was found."
+                    "For example, you found the date of birth is 1993-03-30, then just return '1993-03-30' as the response in str."
+                    "also accept mm/dd/yyyy format or other formats"},
+        {'role': 'user', 'content': user_input}
+    ]
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=context,
+            max_tokens=50
+        )
+        extracted_response = response.choices[0].message.content
+        if extracted_response.lower().__contains__("no") and extracted_response.lower().__contains__('found'):
+            return [False, extracted_response]
+        else:
+            return [True, extracted_response]
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 
 def check_for_name(user_input, model="gpt-3.5-turbo"):
@@ -94,6 +122,7 @@ def check_for_health_condition(user_input, model="gpt-3.5-turbo"):
 #         response_message = "I couldn't find a name in your response. Could you please tell me your name?"
 #
 #     return jsonify({"message": response_message})
+
 
 
 #
